@@ -64,7 +64,7 @@ public:
         {
 
             // Search for the macro
-            for(size_t loop2 = 0; loop2 < CustomMacros.size(); loop2)
+            for(size_t loop2 = 0; loop2 < CustomMacros.size(); loop2++)
             {
                 
                 // Pega a linha, limpa todos os espaços
