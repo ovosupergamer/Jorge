@@ -34,7 +34,7 @@ public:
         // Error message
         std::cout << "[Error], custom macro: " << GetMacroName() << " non implemented\n";
 
-        return File;
+        return NewFile;
     }
 };
 
@@ -59,44 +59,58 @@ public:
 
         std::vector<std::string> NewFile = File;
 
-        // Execute every line
-        for(size_t loop1 = 0; loop1 < NewFile.size(); loop1++)
+        bool Continue = true;
+
+        while(Continue == true)
         {
+            // If any macro has been detected, continue sould be true
+            Continue = false;
 
-            // Search for the macro
-            for(size_t loop2 = 0; loop2 < CustomMacros.size(); loop2++)
+            // Execute every line
+            for(size_t loop1 = 0; loop1 < NewFile.size(); loop1++)
             {
-                
-                // Pega a linha, limpa todos os espaços
-                std::string CurrentLine = StringManipulation::DelSomething(NewFile[loop1],' ');
+                std::cout << "Searching line: ";
 
-                // Pega todos os caracteres atraz de '('
-                std::string MacroName = StringManipulation::GetBefore(CurrentLine,"(");
-
-                // Pega todos os argumentos da macro
-                std::vector<std::string> MacroArgs = StringManipulation::Split(StringManipulation::DelSomething(StringManipulation::GetAfter(CurrentLine,"("),' '),',');
-
-
-                // Procura a macro por nome
-                size_t IndexOfCurrentMacro = -1;
-                for (size_t loop1 = 0; loop1 < CustomMacros.size(); loop1++)
+                // Search for the macro
+                for(size_t loop2 = 0; loop2 < CustomMacros.size(); loop2++)
                 {
-                    if (CustomMacros[loop1]->GetMacroName() == MacroName)
+
+                    
+                    // Pega a linha, limpa todos os espaços
+                    std::string CurrentLine = StringManipulation::DelSomething(NewFile[loop1],' ');
+    
+                    // Pega todos os caracteres atraz de '('
+                    std::string MacroName = StringManipulation::GetBefore(CurrentLine,"(");
+    
+                    // Pega todos os argumentos da macro
+                    std::vector<std::string> MacroArgs = StringManipulation::Split(StringManipulation::DelSomething(StringManipulation::DelSomething(StringManipulation::DelSomething(StringManipulation::GetAfter(CurrentLine,"("),' '),')'),','),';');
+    
+    
+                    // Procura a macro por nome
+                    size_t IndexOfCurrentMacro = -1;
+                    for (size_t loop1 = 0; loop1 < CustomMacros.size(); loop1++)
                     {
-                        IndexOfCurrentMacro = loop1;
-                        break;
-                    } 
-                }
+                        if (CustomMacros[loop1]->GetMacroName() == MacroName)
+                        {
+                            Continue = true;
 
-                if (IndexOfCurrentMacro == -1)
-                {
-                    std::cout << "Jumping line, no custom macros found\n";
-                    break;
-                }
-                else
-                {
-                    std::cout << "Macro found\n";
-                    NewFile = CustomMacros[IndexOfCurrentMacro]->WhenDetected(MacroArgs,loop1,File);
+                            std::cout << "Macro detected: ";
+                            IndexOfCurrentMacro = loop1;
+                            break;
+                        } 
+                    }
+    
+                    if (IndexOfCurrentMacro == -1)
+                    {
+                        std::cout << "Jumping line, no custom macros found\n";
+                    }
+                    else
+                    {
+                        Continue = true;
+
+                        std::cout << "Macro found: " << CustomMacros[IndexOfCurrentMacro]->GetMacroName() << "\n";
+                        NewFile = CustomMacros[IndexOfCurrentMacro]->WhenDetected(MacroArgs,loop1,File);
+                    }
                 }
             }
         }
