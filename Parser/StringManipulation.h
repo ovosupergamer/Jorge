@@ -14,10 +14,9 @@ class StringManipulation
 private:
 protected:
 public:
-    static std::string& DelSomething(std::string& String, const char& Key)
+    static std::string DelSomething(std::string String, const char& Key)
     {
         String.erase(std::remove(String.begin(), String.end(), Key), String.end());
-
 
         return String;
     }
